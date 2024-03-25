@@ -1,2 +1,2 @@
 SELECT * FROM testtable;
-SELECT * FROM testtable;
+INSERT INTO testtable (name) VALUES ('Jyoti testing thru web hook change01');
