@@ -1,0 +1,55 @@
+Vagrant.configure("2") do |config|
+
+    config.vm.define "primary" do |primary| # a.k.a primary server
+        primary.vm.box ="ubuntu/focal64"
+        primary.vm.network "forwarded_port", guest: 5432, host: 5432, host_ip: "192.168.1.11", auto_correct: true
+        primary.vm.network :private_network, ip: "172.19.10.20"
+        primary.vm.hostname = "primary"
+
+        #create a shared folder / driver
+        primary.vm.synced_folder "C:\\Open-source-db-devops\\postgres-ha\\pg_backup_driver", "/pg_backup_driver"
+        
+        primary.vm.provider "virtualbox" do |vb|
+            vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+            vb.memory = 2048
+            vb.cpus = 1
+
+     
+        primary.vm.provision "shell" do |s|
+            s.inline = <<-SHELL
+            sudo apt update
+            sudo apt -y install postgresql postgresql-contrib 
+            sudo systemctl start postgresql.service
+                SHELL
+            s.privileged = true
+        end     
+    end
+end
+    config.vm.define "standby" do |standby| # a.k.a standby server
+        standby.vm.box ="ubuntu/focal64"
+        standby.vm.network "forwarded_port", guest: 5432, host: 5432, host_ip: "192.168.1.13", auto_correct: true
+        standby.vm.network :private_network, ip: "172.19.10.30"
+        standby.vm.hostname = "standby"
+
+        #create a shared folder / driver
+        #standby.vm.synced_folder "C:\\postgres-ha\\pg_backup_driver", "/pg_backup_driver"
+        standby.vm.synced_folder"C:\\Open-source-db-devops\\postgres-ha\\pg_backup_driver", "/pg_backup_driver"
+        
+        standby.vm.provider "virtualbox" do |vb|
+            vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+            vb.memory = 2048
+            vb.cpus = 1
+        end
+
+     
+        standby.vm.provision "shell" do |s|
+            s.inline = <<-SHELL
+                sudo apt update
+                sudo apt -y install postgresql postgresql-contrib 
+                sudo systemctl start postgresql.service
+            SHELL
+            s.privileged = true
+        end     
+    end
+    
+end 

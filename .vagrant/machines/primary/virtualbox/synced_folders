@@ -1,0 +1,1 @@
+{"virtualbox":{"/pg_backup_driver":{"guestpath":"/pg_backup_driver","hostpath":"C:/Open-source-db-devops/postgres-ha/pg_backup_driver","disabled":false,"__vagrantfile":true},"/vagrant":{"guestpath":"/vagrant","hostpath":"C:/postgres-replication","disabled":false,"__vagrantfile":true}}}
